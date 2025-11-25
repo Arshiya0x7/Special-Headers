@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json, os
 from burp import IBurpExtender, IMessageEditorTabFactory, IMessageEditorTab, ITab
-from javax.swing import JPanel, JEditorPane, JScrollPane, BoxLayout, JLabel, JButton, JTextArea, JFileChooser, JSplitPane, JTabbedPane, JCheckBox
+from javax.swing import JPanel, JEditorPane, JScrollPane, BoxLayout, JLabel, JButton, JTextArea, JSplitPane, JTabbedPane, JCheckBox
 from java.awt import BorderLayout, Color, Font, Dimension
 from javax.swing.border import EmptyBorder, TitledBorder, LineBorder
 
@@ -72,11 +72,7 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         headers_tab = self._createHeadersTab()
         tabbed_pane.addTab("Headers Management", headers_tab)
         
-        # Tab 2: Import/Export
-        import_export_tab = self._createImportExportTab()
-        tabbed_pane.addTab("Import/Export", import_export_tab)
-        
-        # Tab 3: About
+        # Tab 2: About
         about_tab = self._createAboutTab()
         tabbed_pane.addTab("About", about_tab)
 
@@ -95,7 +91,7 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         left_panel = JPanel(BorderLayout(5, 5))
         left_panel.setBorder(TitledBorder(LineBorder(Color.GRAY, 1), "Hidden Headers"))
         
-        left_panel.add(JLabel("<html><b>Headers to hide from view:</b><br>One per line (case-insensitive)</html>"), BorderLayout.NORTH)
+        left_panel.add(JLabel("Headers to hide from view - One per line (case-insensitive)"), BorderLayout.NORTH)
         
         self.filter_text = JTextArea()
         self.filter_text.setText("\n".join(sorted(self.filtered_headers)))
@@ -107,11 +103,11 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         filter_scroll.setPreferredSize(Dimension(300, 200))
         left_panel.add(filter_scroll, BorderLayout.CENTER)
         
-        # Filter buttons
+        # Filter buttons - plain text
         filter_btn_panel = JPanel()
-        save_filter_btn = JButton("💾 Save Hidden List", actionPerformed=self._saveFilters)
+        save_filter_btn = JButton("Save Hidden List", actionPerformed=self._saveFilters)
         save_filter_btn.setToolTipText("Save the list of headers to hide")
-        clear_filter_btn = JButton("🗑️ Clear", actionPerformed=lambda e: self.filter_text.setText(""))
+        clear_filter_btn = JButton("Clear", actionPerformed=lambda e: self.filter_text.setText(""))
         clear_filter_btn.setToolTipText("Clear the hidden headers list")
         
         filter_btn_panel.add(save_filter_btn)
@@ -122,7 +118,7 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         right_panel = JPanel(BorderLayout(5, 5))
         right_panel.setBorder(TitledBorder(LineBorder(Color.GRAY, 1), "Highlighted Headers"))
         
-        right_panel.add(JLabel("<html><b>Headers to highlight in red:</b><br>One per line (case-insensitive)</html>"), BorderLayout.NORTH)
+        right_panel.add(JLabel("Headers to highlight in red - One per line (case-insensitive)"), BorderLayout.NORTH)
         
         self.highlight_text = JTextArea()
         self.highlight_text.setText("\n".join(sorted(self.highlight_headers)))
@@ -134,11 +130,11 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         highlight_scroll.setPreferredSize(Dimension(300, 200))
         right_panel.add(highlight_scroll, BorderLayout.CENTER)
         
-        # Highlight buttons
+        # Highlight buttons - plain text
         highlight_btn_panel = JPanel()
-        save_highlight_btn = JButton("💾 Save Highlight List", actionPerformed=self._saveHighlights)
+        save_highlight_btn = JButton("Save Highlight List", actionPerformed=self._saveHighlights)
         save_highlight_btn.setToolTipText("Save the list of headers to highlight")
-        clear_highlight_btn = JButton("🗑️ Clear", actionPerformed=lambda e: self.highlight_text.setText(""))
+        clear_highlight_btn = JButton("Clear", actionPerformed=lambda e: self.highlight_text.setText(""))
         clear_highlight_btn.setToolTipText("Clear the highlighted headers list")
         
         highlight_btn_panel.add(save_highlight_btn)
@@ -161,72 +157,47 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
 
         return panel
 
-    def _createImportExportTab(self):
-        panel = JPanel(BorderLayout(10, 10))
-        panel.setBorder(EmptyBorder(20, 20, 20, 20))
-
-        # Instructions
-        instructions = JLabel(
-            "<html><div style='text-align: center;'>"
-            "<h3>Import/Export Settings</h3>"
-            "<p>Export your current settings to a JSON file, or import settings from a previously exported file.</p>"
-            "<p>This allows you to backup your configuration or share it with other Burp Suite instances.</p>"
-            "</div></html>",
-            JLabel.CENTER
-        )
-        panel.add(instructions, BorderLayout.NORTH)
-
-        # Buttons panel
-        buttons_panel = JPanel()
-        buttons_panel.setLayout(BoxLayout(buttons_panel, BoxLayout.Y_AXIS))
-
-        # Export button
-        export_btn = JButton("📤 Export Settings to File", actionPerformed=self._exportSettings)
-        export_btn.setFont(Font("SansSerif", Font.BOLD, 14))
-        export_btn.setPreferredSize(Dimension(250, 40))
-        export_btn.setToolTipText("Export current settings to a JSON file")
-
-        # Import button
-        import_btn = JButton("📥 Import Settings from File", actionPerformed=self._importSettings)
-        import_btn.setFont(Font("SansSerif", Font.BOLD, 14))
-        import_btn.setPreferredSize(Dimension(250, 40))
-        import_btn.setToolTipText("Import settings from a JSON file")
-
-        # Add some spacing
-        buttons_panel.add(export_btn)
-        buttons_panel.add(JLabel(" "))  # spacer
-        buttons_panel.add(import_btn)
-
-        panel.add(buttons_panel, BorderLayout.CENTER)
-
-        return panel
-
     def _createAboutTab(self):
         panel = JPanel(BorderLayout())
         panel.setBorder(EmptyBorder(20, 20, 20, 20))
 
-        about_text = (
-            "<html><div style='text-align: center;'>"
-            "<h2>Headers Viewer Pro</h2>"
-            "<h3>Version 2.0</h3>"
-            "<p><b>Enhanced Header Management for Burp Suite</b></p>"
-            "<br>"
-            "<p><b>Features:</b></p>"
-            "<ul style='text-align: left;'>"
-            "<li>📊 Clean header-only view in separate tab</li>"
-            "<li>👁️ Hide unwanted headers from view</li>"
-            "<li>🔴 Highlight important headers in red</li>"
-            "<li>🔢 Automatic header counting</li>"
-            "<li>💾 Auto-save settings</li>"
-            "<li>📤 Import/Export configuration</li>"
-            "</ul>"
-            "<br>"
-            "<p><i>Simply navigate to any request/response to see the Headers tab in action!</i></p>"
-            "</div></html>"
+        # Simple text without HTML
+        title_label = JLabel("Headers Viewer Pro", JLabel.CENTER)
+        title_label.setFont(Font("SansSerif", Font.BOLD, 18))
+        
+        version_label = JLabel("Version 2.0", JLabel.CENTER)
+        version_label.setFont(Font("SansSerif", Font.PLAIN, 14))
+        
+        desc_label = JLabel("Enhanced Header Management for Burp Suite", JLabel.CENTER)
+        
+        features_label = JLabel("Features:")
+        features_label.setFont(Font("SansSerif", Font.BOLD, 12))
+        
+        features_text = JLabel(
+            "<html>"
+            "- Clean header-only view in separate tab<br>"
+            "- Hide unwanted headers from view<br>"
+            "- Highlight important headers in red<br>"
+            "- Automatic header counting<br>"
+            "- Auto-save settings<br>"
+            "</html>"
         )
+        
+        note_label = JLabel("Simply navigate to any request/response to see the Headers tab in action!", JLabel.CENTER)
+        note_label.setFont(Font("SansSerif", Font.ITALIC, 12))
 
-        about_label = JLabel(about_text, JLabel.CENTER)
-        panel.add(about_label, BorderLayout.CENTER)
+        about_panel = JPanel()
+        about_panel.setLayout(BoxLayout(about_panel, BoxLayout.Y_AXIS))
+        about_panel.add(title_label)
+        about_panel.add(version_label)
+        about_panel.add(desc_label)
+        about_panel.add(JLabel(" "))  # spacer
+        about_panel.add(features_label)
+        about_panel.add(features_text)
+        about_panel.add(JLabel(" "))  # spacer
+        about_panel.add(note_label)
+
+        panel.add(about_panel, BorderLayout.CENTER)
 
         return panel
 
@@ -241,62 +212,14 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         self.filtered_headers = set([l.strip().lower() for l in lines if l.strip()])
         if self.auto_save:
             self._saveSettings()
-        self.callbacks.printOutput("✅ Hidden headers list saved. (" + str(len(self.filtered_headers)) + " headers)")
+        self.callbacks.printOutput("Hidden headers list saved. (" + str(len(self.filtered_headers)) + " headers)")
 
     def _saveHighlights(self, event):
         lines = self.highlight_text.getText().split("\n")
         self.highlight_headers = set([l.strip().lower() for l in lines if l.strip()])
         if self.auto_save:
             self._saveSettings()
-        self.callbacks.printOutput("✅ Highlight headers list saved. (" + str(len(self.highlight_headers)) + " headers)")
-
-    # ========================================
-    # Export / Import
-    # ========================================
-
-    def _exportSettings(self, event):
-        chooser = JFileChooser()
-        chooser.setDialogTitle("Export Settings to JSON File")
-        chooser.setSelectedFile(java.io.File("burp_headers_settings.json"))
-        
-        result = chooser.showSaveDialog(None)
-
-        if result == JFileChooser.APPROVE_OPTION:
-            file = chooser.getSelectedFile().getPath()
-            data = {
-                "filtered_headers": list(self.filtered_headers),
-                "highlight_headers": list(self.highlight_headers),
-                "auto_save": self.auto_save
-            }
-            with open(file, "w") as f:
-                json.dump(data, f, indent=2)
-            self.callbacks.printOutput("✅ Settings exported to: " + file)
-
-    def _importSettings(self, event):
-        chooser = JFileChooser()
-        chooser.setDialogTitle("Import Settings from JSON File")
-        
-        result = chooser.showOpenDialog(None)
-
-        if result == JFileChooser.APPROVE_OPTION:
-            file = chooser.getSelectedFile().getPath()
-            try:
-                with open(file, "r") as f:
-                    data = json.load(f)
-
-                self.filtered_headers = set(data.get("filtered_headers", []))
-                self.highlight_headers = set(data.get("highlight_headers", []))
-                self.auto_save = data.get("auto_save", True)
-
-                # update UI fields
-                self.filter_text.setText("\n".join(sorted(self.filtered_headers)))
-                self.highlight_text.setText("\n".join(sorted(self.highlight_headers)))
-                self.auto_save_checkbox.setSelected(self.auto_save)
-
-                self._saveSettings()
-                self.callbacks.printOutput("✅ Settings imported from: " + file)
-            except Exception as e:
-                self.callbacks.printOutput("❌ Error importing settings: " + str(e))
+        self.callbacks.printOutput("Highlight headers list saved. (" + str(len(self.highlight_headers)) + " headers)")
 
     # ========================================
     # Burp Tab
