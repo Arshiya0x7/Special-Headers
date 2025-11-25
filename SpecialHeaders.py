@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json, os
 from burp import IBurpExtender, IMessageEditorTabFactory, IMessageEditorTab, ITab
-from javax.swing import JPanel, JEditorPane, JScrollPane, BoxLayout, JLabel, JButton, JTextArea, JSplitPane, JTabbedPane, JCheckBox
+from javax.swing import JPanel, JEditorPane, JScrollPane, BoxLayout, JLabel, JButton, JTextArea, JSplitPane, JTabbedPane
 from java.awt import BorderLayout, Color, Font, Dimension
 from javax.swing.border import EmptyBorder, TitledBorder, LineBorder
 
@@ -37,27 +37,23 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
 
                 self.filtered_headers = set(data.get("filtered_headers", []))
                 self.highlight_headers = set(data.get("highlight_headers", []))
-                self.auto_save = data.get("auto_save", True)
             except:
                 self.filtered_headers = set()
                 self.highlight_headers = set()
-                self.auto_save = True
         else:
             self.filtered_headers = set()
             self.highlight_headers = set()
-            self.auto_save = True
 
     def _saveSettings(self):
         data = {
             "filtered_headers": list(self.filtered_headers),
-            "highlight_headers": list(self.highlight_headers),
-            "auto_save": self.auto_save
+            "highlight_headers": list(self.highlight_headers)
         }
         with open(SETTINGS_FILE, "w") as f:
             json.dump(data, f, indent=2)
 
     # ========================================
-    # Settings Panel UI - IMPROVED
+    # Settings Panel UI
     # ========================================
 
     def _buildSettingsUI(self):
@@ -103,7 +99,7 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         filter_scroll.setPreferredSize(Dimension(300, 200))
         left_panel.add(filter_scroll, BorderLayout.CENTER)
         
-        # Filter buttons - plain text
+        # Filter buttons
         filter_btn_panel = JPanel()
         save_filter_btn = JButton("Save Hidden List", actionPerformed=self._saveFilters)
         save_filter_btn.setToolTipText("Save the list of headers to hide")
@@ -130,7 +126,7 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         highlight_scroll.setPreferredSize(Dimension(300, 200))
         right_panel.add(highlight_scroll, BorderLayout.CENTER)
         
-        # Highlight buttons - plain text
+        # Highlight buttons
         highlight_btn_panel = JPanel()
         save_highlight_btn = JButton("Save Highlight List", actionPerformed=self._saveHighlights)
         save_highlight_btn.setToolTipText("Save the list of headers to highlight")
@@ -145,15 +141,6 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         split_pane.setRightComponent(right_panel)
 
         panel.add(split_pane, BorderLayout.CENTER)
-
-        # Auto-save option
-        auto_save_panel = JPanel()
-        self.auto_save_checkbox = JCheckBox("Auto-save settings", self.auto_save, 
-                                           actionPerformed=self._toggleAutoSave)
-        self.auto_save_checkbox.setToolTipText("Automatically save settings when changed")
-        auto_save_panel.add(self.auto_save_checkbox)
-        
-        panel.add(auto_save_panel, BorderLayout.SOUTH)
 
         return panel
 
@@ -170,18 +157,22 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         
         desc_label = JLabel("Enhanced Header Management for Burp Suite", JLabel.CENTER)
         
-        features_label = JLabel("Features:")
+        features_label = JLabel("Features:", JLabel.CENTER)
         features_label.setFont(Font("SansSerif", Font.BOLD, 12))
         
-        features_text = JLabel(
-            "<html>"
-            "- Clean header-only view in separate tab<br>"
-            "- Hide unwanted headers from view<br>"
-            "- Highlight important headers in red<br>"
-            "- Automatic header counting<br>"
-            "- Auto-save settings<br>"
-            "</html>"
-        )
+        # Create features list without HTML
+        features_panel = JPanel()
+        features_panel.setLayout(BoxLayout(features_panel, BoxLayout.Y_AXIS))
+        
+        feature1 = JLabel("- Clean header-only view in separate tab")
+        feature2 = JLabel("- Hide unwanted headers from view")
+        feature3 = JLabel("- Highlight important headers in red")
+        feature4 = JLabel("- Automatic header counting")
+        
+        features_panel.add(feature1)
+        features_panel.add(feature2)
+        features_panel.add(feature3)
+        features_panel.add(feature4)
         
         note_label = JLabel("Simply navigate to any request/response to see the Headers tab in action!", JLabel.CENTER)
         note_label.setFont(Font("SansSerif", Font.ITALIC, 12))
@@ -193,7 +184,7 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         about_panel.add(desc_label)
         about_panel.add(JLabel(" "))  # spacer
         about_panel.add(features_label)
-        about_panel.add(features_text)
+        about_panel.add(features_panel)
         about_panel.add(JLabel(" "))  # spacer
         about_panel.add(note_label)
 
@@ -201,24 +192,17 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
 
         return panel
 
-    def _toggleAutoSave(self, event):
-        self.auto_save = self.auto_save_checkbox.isSelected()
-        if self.auto_save:
-            self._saveSettings()
-
-    # Save lists with auto-save support
+    # Save lists
     def _saveFilters(self, event):
         lines = self.filter_text.getText().split("\n")
         self.filtered_headers = set([l.strip().lower() for l in lines if l.strip()])
-        if self.auto_save:
-            self._saveSettings()
+        self._saveSettings()
         self.callbacks.printOutput("Hidden headers list saved. (" + str(len(self.filtered_headers)) + " headers)")
 
     def _saveHighlights(self, event):
         lines = self.highlight_text.getText().split("\n")
         self.highlight_headers = set([l.strip().lower() for l in lines if l.strip()])
-        if self.auto_save:
-            self._saveSettings()
+        self._saveSettings()
         self.callbacks.printOutput("Highlight headers list saved. (" + str(len(self.highlight_headers)) + " headers)")
 
     # ========================================
@@ -250,7 +234,7 @@ class HeadersTab(IMessageEditorTab):
         self.html_viewer = JEditorPane("text/html", "")
         self.html_viewer.setEditable(False)
         self.panel.add(JScrollPane(self.html_viewer), BorderLayout.CENTER)
-        self.headers_count = 0  # تعداد هدرهای فعلی
+        self.headers_count = 0  # Current headers count
 
     def getTabCaption(self):
         return "Headers (%d)" % self.headers_count
@@ -284,10 +268,10 @@ class HeadersTab(IMessageEditorTab):
 
                 self.headers_count += 1
                 if name in self.extender.highlight_headers:
-                    # فقط نام هدر قرمز و بولد
+                    # Only header name in red and bold
                     html += "<div style='margin-bottom: 2px;'><span style='color: #ff6b6b; font-weight: bold;'>%s</span>: <span style='color: #a9b7c6;'>%s</span></div>" % (parts[0], value)
                 else:
-                    # فقط نام هدر سفید و بولد
+                    # Only header name in white and bold
                     html += "<div style='margin-bottom: 2px;'><span style='color: #ffffff; font-weight: bold;'>%s</span>: <span style='color: #a9b7c6;'>%s</span></div>" % (parts[0], value)
 
             html += "</body></html>"
