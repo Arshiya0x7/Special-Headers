@@ -44,13 +44,6 @@ The extension also includes an advanced live header counter that updates even wh
 
 ---
 
-### ✔ Export / Import Settings
-- Export your configuration to a file  
-- Import on another device or share with teammates  
-- Helps maintain consistent testing environments
-
----
-
 ### ✔ Live Header Counting
 - Header count updates automatically  
 - Works even when the “Headers” tab is not open  
