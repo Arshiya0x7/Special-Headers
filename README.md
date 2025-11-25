@@ -63,7 +63,7 @@ The extension also includes an advanced live header counter that updates even wh
 | Header Type | Style |
 |-------------|--------|
 | Highlighted headers | **Bold + Red** |
-| Normal headers | **Bold + Blue** |
+| Normal headers | **Bold + White** |
 | Header values | Gray-ish (`#a9b7c6`) |
 
 ---
