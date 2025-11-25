@@ -101,7 +101,7 @@ This extension uses:
 - `IHttpListener`
 - `IExtensionStateListener`
 
-Developed fully in Python for use with Jython inside Burp Suite.
+Developed fully in Python for use with Jython2.7.3 inside Burp Suite.
 
 ---
 
