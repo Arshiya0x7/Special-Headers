@@ -13,6 +13,9 @@ The extension also includes an advanced live header counter that updates even wh
 
 ---
 
+<img width="1493" height="509" alt="image" src="https://github.com/user-attachments/assets/23ee3962-4610-4215-9837-8856fa3664b8" />
+
+
 ## 🚀 Features
 
 ### ✔ Dedicated “Headers” Tab
