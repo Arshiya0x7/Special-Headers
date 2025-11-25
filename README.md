@@ -1,4 +1,4 @@
-# 📘 Header Viewer+ — Burp Suite Extension
+# 📘 Special Headers — Burp Suite Extension
 ### A clean, customizable HTTP header viewer for Burp Suite  
 **Created and maintained by Arshia**
 
