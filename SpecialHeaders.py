@@ -13,7 +13,7 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         self.callbacks = callbacks
         self.helpers = callbacks.getHelpers()
 
-        callbacks.setExtensionName("Headers Viewer Pro")
+        callbacks.setExtensionName("Special Headers")
 
         # Load saved settings
         self._loadSettings()
@@ -149,13 +149,14 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         panel.setBorder(EmptyBorder(20, 20, 20, 20))
 
         # Simple text without HTML
-        title_label = JLabel("Headers Viewer Pro", JLabel.CENTER)
+        title_label = JLabel("Special Headers", JLabel.CENTER)
         title_label.setFont(Font("SansSerif", Font.BOLD, 18))
         
-        version_label = JLabel("Version 2.0", JLabel.CENTER)
+        version_label = JLabel("Version 1.1", JLabel.CENTER)
         version_label.setFont(Font("SansSerif", Font.PLAIN, 14))
         
         desc_label = JLabel("Enhanced Header Management for Burp Suite", JLabel.CENTER)
+        desc_labe2 = JLabel("Created By Arshia : https://github.com/Arshiya0x7/Special-Headers/", JLabel.CENTER)
         
         features_label = JLabel("Features:", JLabel.CENTER)
         features_label.setFont(Font("SansSerif", Font.BOLD, 12))
@@ -182,6 +183,7 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
         about_panel.add(title_label)
         about_panel.add(version_label)
         about_panel.add(desc_label)
+        about_panel.add(desc_labe2)
         about_panel.add(JLabel(" "))  # spacer
         about_panel.add(features_label)
         about_panel.add(features_panel)
@@ -209,7 +211,7 @@ class BurpExtender(IBurpExtender, IMessageEditorTabFactory, ITab):
     # Burp Tab
     # ========================================
     def getTabCaption(self):
-        return "Headers Settings"
+        return "Headers"
 
     def getUiComponent(self):
         return self.settings_panel
