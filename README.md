@@ -7,8 +7,15 @@
 ## ⭐ Overview
 
 **Special Headers**, developed by **Arshia0X7**, is a Burp Suite extension written in Python (Jython) that adds a dedicated tab for inspecting HTTP headers of any request or response.  
-It focuses solely on headers, providing a clean and highly customizable interface with filtering, highlighting, and persistent settings.
 
+This plugin is for displaying custom headers of all requests and responses.  
+
+By providing two lists:  
+- 1. Headers that do not need to be displayed  
+- 2. Headers that should be highlighted 
+It displays the custom headers in a tab named "Headers".
+
+It focuses solely on headers, providing a clean and highly customizable interface with filtering, highlighting, and persistent settings.
 The extension also includes an advanced live header counter that updates when the tab is active.
 
 ---
