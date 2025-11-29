@@ -6,7 +6,7 @@
 
 ## ⭐ Overview
 
-**Header Viewer+**, developed by **Arshia**, is a Burp Suite extension written in Python (Jython) that adds a dedicated tab for inspecting HTTP headers of any request or response.  
+**Special Headers**, developed by **Arshia0X7**, is a Burp Suite extension written in Python (Jython) that adds a dedicated tab for inspecting HTTP headers of any request or response.  
 It focuses solely on headers, providing a clean and highly customizable interface with filtering, highlighting, and persistent settings.
 
 The extension also includes an advanced live header counter that updates even when the tab is not active.
